@@ -1,30 +1,33 @@
 {% set name = "opentelemetry-instrumentation-threading" %}
-{% set version = "0.57b0" %}
+{% set version = "0.58b0" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/opentelemetry_instrumentation_threading-{{ version }}.tar.gz
-  sha256: 06fa4c98d6bfe4670e7532497670ac202db42afa647ff770aedce0e422421c6e
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_')}}-{{ version }}.tar.gz
+  sha256: f68c61f77841f9ff6270176f4d496c10addbceacd782af434d705f83e4504862
 
 build:
-  noarch: python
-  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   number: 0
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  skip: true  # [py<39]
 
 requirements:
   host:
-    - python {{ python_min }}
+    - python
     - hatchling
     - pip
   run:
-    - python >={{ python_min }}
-    - opentelemetry-api >=1.12,<2.dev0
+    - python
+    - opentelemetry-api >=1.12,<2
     - opentelemetry-instrumentation =={{ version }}
     - wrapt >=1.0.0,<2.0.0
 
+# Tests disabled:
+# E   ModuleNotFoundError: No module named 'opentelemetry.test'
+# https://pypi.org/project/opentelemetry-test-utils, not in the main channel.
 test:
   imports:
     - opentelemetry.instrumentation.threading
@@ -32,16 +35,22 @@ test:
     - pip check
   requires:
     - pip
-    - python {{ python_min }}
 
 about:
   home: https://www.traceloop.com/openllmetry
-  dev_url: https://github.com/traceloop/openllmetry
+  dev_url: https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-threading
   doc_url: https://www.traceloop.com/docs/openllmetry/introduction
   summary: Thread context propagation support for OpenTelemetry
   license: Apache-2.0
+  license_family: Apache
   license_file: LICENSE
+  description: |
+    This library provides instrumentation for the threading module to ensure that the OpenTelemetry context is propagated across threads.
+    It is important to note that this instrumentation does not produce any telemetry data on its own.
+    It merely ensures that the context is correctly propagated when threads are used.
 
 extra:
   recipe-maintainers:
     - timkpaine
+  skip-lints:
+    - invalid_url
