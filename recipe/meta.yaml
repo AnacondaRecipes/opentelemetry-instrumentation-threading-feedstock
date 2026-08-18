@@ -1,18 +1,18 @@
 {% set name = "opentelemetry-instrumentation-threading" %}
-{% set version = "0.59b0" %}
+{% set version = "0.64b0" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_')}}-{{ version }}.tar.gz
-  sha256: ce5658730b697dcbc0e0d6d13643a69fd8aeb1b32fa8db3bade8ce114c7975f3
+  sha256: 0a07d7329f69dfae5036a7cb184f502c8b91cb0538012f5304bd32ffe9ade451
 
 build:
   number: 0
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-  skip: true  # [py<39]
+  skip: true  # [py<310]
 
 requirements:
   host:
@@ -23,7 +23,7 @@ requirements:
     - python
     - opentelemetry-api >=1.12,<2
     - opentelemetry-instrumentation =={{ version }}
-    - wrapt >=1.0.0,<2.0.0
+    - wrapt >=1.0.0,<3.0.0
 
 # Tests disabled:
 # E   ModuleNotFoundError: No module named 'opentelemetry.test'
